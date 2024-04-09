@@ -36,9 +36,10 @@ public class main2 extends Application {
         Button doctorButton = new Button("Doctor Login");
         Button parentButton = new Button("Parent Login");
         Button nurseButton = new Button("Nurse Login");
+        Button newUser = new Button("Create New Account");
 
         // VBox to hold the buttons vertically aligned
-        VBox buttonsBox = new VBox(10, doctorButton, parentButton, nurseButton);
+        VBox buttonsBox = new VBox(10, doctorButton, parentButton, nurseButton, newUser);
         buttonsBox.setAlignment(Pos.CENTER); // Center alignment
 
         // Action event handlers for each button
@@ -104,6 +105,10 @@ public class main2 extends Application {
         // Create the scene with the grid and set it to the primary stage
         Scene loginScene = new Scene(grid, 400, 300);
         primaryStage.setScene(loginScene);
+    }
+    
+    private void showNewUserWindow(){
+    
     }
     
     private void showPatientScreen()  {
