@@ -1,4 +1,4 @@
-package hw1;
+package projectPhase3;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -21,7 +21,7 @@ import javafx.scene.text.Text;
 
 
 // Main class for the application, extending JavaFX Application
-public class hw1 extends Application {
+public class projectPhase3 extends Application {
 
     // Stage for the primary window
     private Stage primaryStage;
@@ -86,7 +86,7 @@ public class hw1 extends Application {
         TextField lastName = new TextField();
         grid.add(lastName, 1, 2);
         
-        Label Date = new Label("Date:");
+        Label Date = new Label("Birthday:");
         grid.add(Date, 0, 3);
         DatePicker date = new DatePicker();
         grid.add(date, 1, 3);
@@ -110,7 +110,7 @@ public class hw1 extends Application {
             
             boolean found = search(filename);
             if(found) {
-            	showPatientScreen();
+            	showPatientScreen(firstname, lastname, bday);
             } else
             	showAlert("Error", "Account not found");            
        
@@ -142,7 +142,7 @@ public class hw1 extends Application {
         TextField lastName = new TextField();
         grid.add(lastName, 1, 2);
         
-        Label Date = new Label("Date:");
+        Label Date = new Label("Birthday:");
         grid.add(Date, 0, 3);
         DatePicker date = new DatePicker();
         grid.add(date, 1, 3);
@@ -201,7 +201,7 @@ public class hw1 extends Application {
         TextField lastName = new TextField();
         grid.add(lastName, 1, 2);
         
-        Label Date = new Label("Date:");
+        Label Date = new Label("Birthday:");
         grid.add(Date, 0, 3);
         DatePicker date = new DatePicker();
         grid.add(date, 1, 3);
@@ -260,7 +260,7 @@ public class hw1 extends Application {
         TextField lastName = new TextField();
         grid.add(lastName, 1, 2);
         
-        Label Date = new Label("Date:");
+        Label Date = new Label("Birthday:");
         grid.add(Date, 0, 3);
         DatePicker date = new DatePicker();
         grid.add(date, 1, 3);
@@ -316,27 +316,7 @@ public class hw1 extends Application {
         
     }
     
-    private void showConfPassError() {
-    	GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
-        
-        Label error = new Label("Error:");
-        grid.add(error, 0, 1);
-        Label desc = new Label("\"confirm password\" does not match \"password\"");
-        grid.add(desc, 0, 2);
-        Button back = new Button("Back");
-        grid.add(back, 0, 3);
-        
-        back.setOnAction(event->showNewUserWindow());
-        
-        Scene confPassError = new Scene(grid, 350, 200);
-        primaryStage.setScene(confPassError);
-    }
-    
-    private void showPatientScreen()  {
+    private void showPatientScreen(String fn, String ln, String bd)  {
     	GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
@@ -347,6 +327,7 @@ public class hw1 extends Application {
         grid.add(info, 0, 1);
         info.setOnAction(event ->{
         	//***open the patients info screen***
+        	patientInfoScreen(fn,ln,bd);
         });
         
         Button summary = new Button("view summary of visits");
@@ -363,43 +344,105 @@ public class hw1 extends Application {
     	
         Scene patientScreen = new Scene(grid, 350, 200);
         primaryStage.setScene(patientScreen);
+        
+        Button logout = new Button("Logout");
+        grid.add(logout, 0, 4);
+        logout.setOnAction(event-> primaryStage.setScene(createMainScene()));
     }
 
-    private void patientInfoScreen() {
+    private void patientInfoScreen(String fn, String ln, String bd) {
     	GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(20);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
         
+        String PHONE ="";
+        String EMAIL = "";
+        String INSURANCE = "";
+        String PHARMACY ="";
+        
+        String filename = "P" + " " + fn + " " + ln + " " + bd;
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+        	for (int i=0; i<4; i++) {
+        		reader.readLine();
+        	}
+        	PHONE = reader.readLine();
+    		EMAIL = reader.readLine();
+    		INSURANCE = reader.readLine();
+    		PHARMACY = reader.readLine();
+        } catch (IOException e) {
+        System.err.println("An error occurred");
+        }
+        
         Label PhoneNumber = new Label("Phone Number:");
         grid.add(PhoneNumber, 0, 1);
         TextField phoneNumber = new TextField();
         grid.add(phoneNumber, 1, 1);
+        phoneNumber.setText(PHONE);
         
         Label Email = new Label("Email:");
         grid.add(Email, 0, 2);
         TextField email = new TextField();
         grid.add(email, 1, 2);
+        email.setText(EMAIL);
         
         Label Insurance = new Label("Insurance ID:");
         grid.add(Insurance, 0, 3);
         TextField insurance = new TextField();
         grid.add(insurance, 1, 3);
+        insurance.setText(INSURANCE);
         
         Label Pharmacy = new Label("Pharmacy:");
         grid.add(Pharmacy, 0, 4);
         TextField pharmacy = new TextField();
         grid.add(pharmacy, 1, 4);
+        pharmacy.setText(PHARMACY);
         
         Button back = new Button("Back");
         grid.add(back, 0, 5);
-        back.setOnAction(event->showPatientScreen());
+        back.setOnAction(event->showPatientScreen(fn,ln,bd));
+        
+        Button save = new Button("Save");
+        grid.add(save, 1, 5);
+        save.setOnAction(event->{
+        	
+        	String pho = phoneNumber.getText();
+            String ema = email.getText();
+            String ins = insurance.getText();
+            String pha = pharmacy.getText();
+        	
+        	savePatientInfoToFile(fn,ln,bd,pho,ema,ins,pha);
+        	});
         
         
         Scene patientInfoScreen = new Scene(grid, 600, 400);
         primaryStage.setScene(patientInfoScreen);
         
+    }
+    
+    private void savePatientInfoToFile(String fn, String ln, String bd, String numb, String email, String insurance, String pharmacy) {
+    	String filename = "P" + " " + fn + " " + ln + " " + bd;
+    	boolean found = search(filename);
+        if(found) {
+        	try(BufferedWriter writer = new BufferedWriter(new FileWriter(filename))){
+        		for (int i=0;i<4;i++) {
+        			writer.newLine();
+        		}
+        		writer.write(numb);
+        		writer.newLine();
+        		writer.write(email);
+        		writer.newLine();
+        		writer.write(insurance);
+        		writer.newLine();
+        		writer.write(pharmacy);
+        	}
+        	catch (IOException ex) {
+        		ex.printStackTrace();
+        	}
+        } else
+        	showAlert("Error", "Account not found");
+    	
     }
     
     private void showDoctorScreen()  {
