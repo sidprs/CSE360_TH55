@@ -7,7 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 
-import hw1.hw5.GlobalData;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -364,6 +363,43 @@ public class hw1 extends Application {
     	
         Scene patientScreen = new Scene(grid, 350, 200);
         primaryStage.setScene(patientScreen);
+    }
+
+    private void patientInfoScreen() {
+    	GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(20);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        
+        Label PhoneNumber = new Label("Phone Number:");
+        grid.add(PhoneNumber, 0, 1);
+        TextField phoneNumber = new TextField();
+        grid.add(phoneNumber, 1, 1);
+        
+        Label Email = new Label("Email:");
+        grid.add(Email, 0, 2);
+        TextField email = new TextField();
+        grid.add(email, 1, 2);
+        
+        Label Insurance = new Label("Insurance ID:");
+        grid.add(Insurance, 0, 3);
+        TextField insurance = new TextField();
+        grid.add(insurance, 1, 3);
+        
+        Label Pharmacy = new Label("Pharmacy:");
+        grid.add(Pharmacy, 0, 4);
+        TextField pharmacy = new TextField();
+        grid.add(pharmacy, 1, 4);
+        
+        Button back = new Button("Back");
+        grid.add(back, 0, 5);
+        back.setOnAction(event->showPatientScreen());
+        
+        
+        Scene patientInfoScreen = new Scene(grid, 600, 400);
+        primaryStage.setScene(patientInfoScreen);
+        
     }
     
     private void showDoctorScreen()  {
