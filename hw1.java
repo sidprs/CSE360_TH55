@@ -1,27 +1,32 @@
-package projectPhase3;
+package hw1;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 
+import hw1.hw5.GlobalData;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.text.Text;
-import javafx.scene.control.TextField;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
 
 
 // Main class for the application, extending JavaFX Application
-public class projectPhase3 extends Application {
+public class hw1 extends Application {
 
     // Stage for the primary window
     private Stage primaryStage;
+    private LocalDate selectedDate;
 
     // Start method required by JavaFX Application
     @Override
@@ -60,7 +65,7 @@ public class projectPhase3 extends Application {
         mainPane.setPadding(new Insets(10));
 
         // Create and return the main scene
-        return new Scene(mainPane, 300, 200);
+        return new Scene(mainPane, 400, 300);
     }
 
     // Method to display the login window for different user types
@@ -101,10 +106,15 @@ public class projectPhase3 extends Application {
             String firstname = firstName.getText();
             String lastname = lastName.getText();
             LocalDate theDate = date.getValue();
+            String bday = theDate.toString();
+            String filename = "P" + " " + firstname + " " + lastname + " " + bday;
             
-            
-            // ***ADD HERE***
-            showPatientScreen();
+            boolean found = search(filename);
+            if(found) {
+            	showPatientScreen();
+            } else
+            	showAlert("Error", "Account not found");            
+       
             
         });
         
@@ -152,11 +162,22 @@ public class projectPhase3 extends Application {
             String firstname = firstName.getText();
             String lastname = lastName.getText();
             LocalDate theDate = date.getValue();
+            String bday = theDate.toString();
+            String filename = "D" + " " + firstname + " " + lastname + " " + bday;
             
-            
-            // ***ADD HERE***
-            
+            boolean found = search(filename);
+            if(found) {
+            	//This is a temporary placeholder stage to verify that information was put in correctly
+            	Stage stage = (Stage) loginButton.getScene().getWindow();
+                VBox newRoot = new VBox();
+                newRoot.getChildren().add(new Label("Welcome, Doctor " + firstname + "!"));
+                Scene newScene = new Scene(newRoot, 400, 300);
+                stage.setScene(newScene);
+                stage.show();
+            } else
+            	showAlert("Error", "Doctor account not found");            
         });
+            
         
      // Create the scene with the grid and set it to the primary stage
         Scene loginScene = new Scene(grid, 400, 300);
@@ -195,15 +216,27 @@ public class projectPhase3 extends Application {
         Button loginButton = new Button("Login");
         grid.add(loginButton, 1, 4);
 
-        // Action event for login button
+        
+
         loginButton.setOnAction(event -> {
-            String firstname = firstName.getText();
+        	String firstname = firstName.getText();
             String lastname = lastName.getText();
             LocalDate theDate = date.getValue();
+            String bday = theDate.toString();
+            String filename = "N" + " " + firstname + " " + lastname + " " + bday;
             
-            
-            // ***ADD HERE***
-            
+            boolean found = search(filename);
+            if(found) {
+            	//This is a temporary placeholder stage to verify that information was put in correctly
+            	Stage stage = (Stage) loginButton.getScene().getWindow();
+                VBox newRoot = new VBox();
+                newRoot.getChildren().add(new Label("Welcome, Nurse " + firstname + "!"));
+                Scene newScene = new Scene(newRoot, 400, 300);
+                stage.setScene(newScene);
+                stage.show();
+                
+            } else
+            	showAlert("Error", "Nurse account not found");            
         });
         
      // Create the scene with the grid and set it to the primary stage
@@ -233,7 +266,6 @@ public class projectPhase3 extends Application {
         DatePicker date = new DatePicker();
         grid.add(date, 1, 3);
         
-        
         ToggleGroup toggle = new ToggleGroup();
         RadioButton patient = new RadioButton("Patient");
         RadioButton doctor = new RadioButton("Doctor");
@@ -253,12 +285,35 @@ public class projectPhase3 extends Application {
         
         back.setOnAction(event -> primaryStage.setScene(createMainScene()));
         
+        create.setOnAction(e -> {
+        	if (firstName.getText().trim().isEmpty() || lastName.getText().trim().isEmpty() || date.getValue() == null) {
+                showAlert("Error", "All fields must be filled out.");
+            } else {
+            String status = "";
+            RadioButton radioButton = (RadioButton) toggle.getSelectedToggle();
+            if(radioButton != null) {
+            	if(radioButton.equals(nurse)) {
+            		status = "N";
+            	}
+            	if(radioButton.equals(patient)) {
+            		status = "P";
+            	}
+            	if(radioButton.equals(doctor)) {
+            		status = "D";
+            	}
+            }
+            
+            
+            String first = firstName.getText();
+            String last = lastName.getText();
+            selectedDate = date.getValue();
+
+            saveInfoToFile(status, first, last, selectedDate);
+            primaryStage.setScene(createMainScene());
+            }});
         
         Scene newUserScene = new Scene(grid, 400, 300);
         primaryStage.setScene(newUserScene);
-        
-        
-        
         
     }
     
@@ -280,7 +335,6 @@ public class projectPhase3 extends Application {
         
         Scene confPassError = new Scene(grid, 350, 200);
         primaryStage.setScene(confPassError);
-    	
     }
     
     private void showPatientScreen()  {
@@ -323,7 +377,35 @@ public class projectPhase3 extends Application {
     	//Someone do
     	
     }
-
+    
+    public void saveInfoToFile(String status, String first, String last, LocalDate date) {
+    	String bday = date.toString();
+	    try (BufferedWriter writer = new BufferedWriter(new FileWriter(status + " " + first + " " + last + " " + bday))) {
+	        writer.write("First Name: " + first);
+	        writer.newLine();
+	        writer.write("Last Name: " + last);
+	        writer.newLine();
+	        writer.write("Birthday:  " + date);
+	        writer.newLine();
+	    } catch (IOException ex) {
+	        ex.printStackTrace();
+	    }
+	}
+    public boolean search(String fileName) {
+	    try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+	        	return true;
+	    } catch (IOException e) {
+	        System.err.println("An error occurred");
+	    }
+	    return false;
+	}
+    public void showAlert(String title, String message) {
+	    Alert alert = new Alert(AlertType.ERROR);
+	    alert.setTitle(title);
+	    alert.setHeaderText(null);
+	    alert.setContentText(message);
+	    alert.showAndWait();
+	}
     // Main method to launch the application
     public static void main(String[] args) {
         launch(args);
