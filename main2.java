@@ -9,6 +9,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.text.Text;
+import javafx.scene.control.TextField;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 
 // Main class for the application, extending JavaFX Application
 public class main2 extends Application {
@@ -46,6 +50,7 @@ public class main2 extends Application {
         doctorButton.setOnAction(event -> showLoginWindow("Doctor"));
         parentButton.setOnAction(event -> showLoginWindow("Parent"));
         nurseButton.setOnAction(event -> showLoginWindow("Nurse"));
+        newUser.setOnAction(event->showNewUserWindow());
 
         // Create the main pane with the VBox
         StackPane mainPane = new StackPane(buttonsBox);
@@ -108,7 +113,75 @@ public class main2 extends Application {
     }
     
     private void showNewUserWindow(){
+    	GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        
+        Label usernameLabel = new Label("Username:");
+        grid.add(usernameLabel, 0, 1);
+        TextField usernameField = new TextField();
+        grid.add(usernameField, 1, 1);
+        
+        Label passwordLabel = new Label("Password:");
+        grid.add(passwordLabel, 0, 2);
+        PasswordField passwordField = new PasswordField();
+        grid.add(passwordField, 1, 2);
+        
+        Label passwordConfirm = new Label("Confirm Password:");
+        grid.add(passwordConfirm, 0, 3);
+        PasswordField passConf = new PasswordField();
+        grid.add(passConf, 1, 3);
+        
+        ToggleGroup toggle = new ToggleGroup();
+        RadioButton parent = new RadioButton("Parent");
+        RadioButton doctor = new RadioButton("Doctor");
+        RadioButton nurse = new RadioButton("Nurse");
+        parent.setToggleGroup(toggle);
+        doctor.setToggleGroup(toggle);
+        nurse.setToggleGroup(toggle);
+        grid.add(parent, 0, 4);
+        grid.add(nurse, 1, 4);
+        grid.add(doctor, 2, 4);
+        
+        Button create = new Button("Create New User");
+        grid.add(create, 1, 5);
+        
+        create.setOnAction(event -> {
+        	if (passwordField != passConf) {
+        		showConfPassError();
+        	}
+        });
+        
+        
+        Scene newUserScene = new Scene(grid, 400, 300);
+        primaryStage.setScene(newUserScene);
+        
+        
+        
+        
+    }
     
+    private void showConfPassError() {
+    	GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        
+        Label error = new Label("Error:");
+        grid.add(error, 0, 1);
+        Label desc = new Label("\"confirm password\" does not match \"password\"");
+        grid.add(desc, 0, 2);
+        Button back = new Button("Back");
+        grid.add(back, 0, 3);
+        
+        back.setOnAction(event->showNewUserWindow());
+        
+        Scene confPassError = new Scene(grid, 350, 200);
+        primaryStage.setScene(confPassError);
+    	
     }
     
     private void showPatientScreen()  {
@@ -134,4 +207,3 @@ public class main2 extends Application {
         launch(args);
     }
 }
-
