@@ -15,11 +15,7 @@ import javafx.scene.text.Text;
 import javafx.scene.control.TextField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
-<<<<<<< HEAD
-=======
 
-
->>>>>>> pranav
 
 // Main class for the application, extending JavaFX Application
 public class projectPhase3 extends Application {
@@ -222,31 +218,6 @@ public class projectPhase3 extends Application {
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
         
-<<<<<<< HEAD
-        Label usernameLabel = new Label("Username:");
-        grid.add(usernameLabel, 0, 1);
-        TextField usernameField = new TextField();
-        grid.add(usernameField, 1, 1);
-        
-        Label passwordLabel = new Label("Password:");
-        grid.add(passwordLabel, 0, 2);
-        PasswordField passwordField = new PasswordField();
-        grid.add(passwordField, 1, 2);
-        
-        Label passwordConfirm = new Label("Confirm Password:");
-        grid.add(passwordConfirm, 0, 3);
-        PasswordField passConf = new PasswordField();
-        grid.add(passConf, 1, 3);
-        
-        ToggleGroup toggle = new ToggleGroup();
-        RadioButton parent = new RadioButton("Parent");
-        RadioButton doctor = new RadioButton("Doctor");
-        RadioButton nurse = new RadioButton("Nurse");
-        parent.setToggleGroup(toggle);
-        doctor.setToggleGroup(toggle);
-        nurse.setToggleGroup(toggle);
-        grid.add(parent, 0, 4);
-=======
         Label FirstName = new Label("FirstName:");
         grid.add(FirstName, 0, 1);
         TextField firstName = new TextField();
@@ -271,25 +242,16 @@ public class projectPhase3 extends Application {
         doctor.setToggleGroup(toggle);
         nurse.setToggleGroup(toggle);
         grid.add(patient, 0, 4);
->>>>>>> pranav
         grid.add(nurse, 1, 4);
         grid.add(doctor, 2, 4);
         
         Button create = new Button("Create New User");
         grid.add(create, 1, 5);
-<<<<<<< HEAD
-        
-        create.setOnAction(event -> {
-        	if (passwordField != passConf) {
-        		showConfPassError();
-        	}
-        });
-=======
+
         Button back = new Button("Back");
         grid.add(back, 0, 5);
         
         back.setOnAction(event -> primaryStage.setScene(createMainScene()));
->>>>>>> pranav
         
         
         Scene newUserScene = new Scene(grid, 400, 300);
