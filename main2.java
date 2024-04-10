@@ -54,15 +54,9 @@ public class projectPhase3 extends Application {
         buttonsBox.setAlignment(Pos.CENTER); // Center alignment
 
         // Action event handlers for each button
-<<<<<<< HEAD
-        doctorButton.setOnAction(event -> showLoginWindow("Doctor"));
-        parentButton.setOnAction(event -> showLoginWindow("Parent"));
-        nurseButton.setOnAction(event -> showLoginWindow("Nurse"));
-=======
         doctorButton.setOnAction(event -> showDoctorLoginWindow("Doctor"));
         patientButton.setOnAction(event -> showPatientLoginWindow("Patient"));
         nurseButton.setOnAction(event -> showNurseLoginWindow("Nurse"));
->>>>>>> pranav
         newUser.setOnAction(event->showNewUserWindow());
 
         // Create the main pane with the VBox
