@@ -468,28 +468,37 @@ public class main2 extends Application {
         grid.add(lastNameLabel, 0, 1);
         TextField lastNameField = new TextField();
         grid.add(lastNameField, 1, 1);
+        
+        Label Date = new Label("Birthday:");
+        Date.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        grid.add(Date, 0, 2);
+        DatePicker date = new DatePicker();
+        grid.add(date, 1, 2);
 
+        	
+        
+        
         Label prescriptionLabel = new Label("Prescription:");
         prescriptionLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-        grid.add(prescriptionLabel, 0, 2);
+        grid.add(prescriptionLabel, 0, 3);
         TextField prescriptionField = new TextField();
-        grid.add(prescriptionField, 1, 2);
+        grid.add(prescriptionField, 1, 3);
 
         Label doctorNoteLabel = new Label("Doctor Note:");
         doctorNoteLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-        grid.add(doctorNoteLabel, 0, 3);
+        grid.add(doctorNoteLabel, 0, 4);
         TextField doctorNoteField = new TextField();
-        grid.add(doctorNoteField, 1, 3);
+        grid.add(doctorNoteField, 1, 4);
 
         // Read pharmacy name from the file
         String pharmacyName = readPharmacyNameFromFile("pharmacy.txt");
 
         Label pharmacyNameLabel = new Label("Pharmacy Name:");
         pharmacyNameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
-        grid.add(pharmacyNameLabel, 0, 4);
+        grid.add(pharmacyNameLabel, 0, 5);
 
         Label pharmacyValueLabel = new Label(pharmacyName);
-        grid.add(pharmacyValueLabel, 1, 4);
+        grid.add(pharmacyValueLabel, 1, 5);
 
         // Add a button to schedule
         
