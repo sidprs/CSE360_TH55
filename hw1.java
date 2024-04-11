@@ -1,8 +1,8 @@
-<<<<<<< HEAD
-package projectPhase3;
-=======
+
+
+
 package homework1;
->>>>>>> sid
+
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,11 +25,10 @@ import javafx.scene.text.Text;
 
 
 // Main class for the application, extending JavaFX Application
-<<<<<<< HEAD
-public class projectPhase3 extends Application {
-=======
+
+
 public class main2 extends Application {
->>>>>>> sid
+
 
     // Stage for the primary window
     private Stage primaryStage;
@@ -422,33 +421,7 @@ public class main2 extends Application {
         Scene patientInfoScreen = new Scene(grid, 600, 400);
         primaryStage.setScene(patientInfoScreen);
         
-<<<<<<< HEAD
-    }
-    
-    private void savePatientInfoToFile(String fn, String ln, String bd, String numb, String email, String insurance, String pharmacy) {
-    	String filename = "P" + " " + fn + " " + ln + " " + bd;
-    	boolean found = search(filename);
-        if(found) {
-        	try(BufferedWriter writer = new BufferedWriter(new FileWriter(filename))){
-        		for (int i=0;i<4;i++) {
-        			writer.newLine();
-        		}
-        		writer.write(numb);
-        		writer.newLine();
-        		writer.write(email);
-        		writer.newLine();
-        		writer.write(insurance);
-        		writer.newLine();
-        		writer.write(pharmacy);
-        	}
-        	catch (IOException ex) {
-        		ex.printStackTrace();
-        	}
-        } else
-        	showAlert("Error", "Account not found");
-    	
-=======
->>>>>>> sid
+
     }
     
     private void savePatientInfoToFile(String fn, String ln, String bd, String numb, String email, String insurance, String pharmacy) {
