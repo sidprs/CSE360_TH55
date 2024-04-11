@@ -604,12 +604,27 @@ public class main2 extends Application {
         }
         return "Pharmacy Not Found"; // Return a default value if pharmacy name not found
     }
+
+//someone make sure this function works
+   private void showNurseScreen()  {
+    GridPane grid = new GridPane();
+    grid.setAlignment(Pos.CENTER); // Center alignment
+    grid.setHgap(10); // Horizontal gap between components
+    grid.setVgap(10); // Vertical gap between components
+    grid.setPadding(new Insets(25, 25, 25, 25)); // Padding around the grid
     
-    private void showNurseScreen()  {
-    	
-    	//Someone do
-    	
-    }
+    Button recordVitalsButton = new Button("Record Patient Vitals");
+    grid.add(recordVitalsButton, 0, 0);
+    recordVitalsButton.setOnAction(event -> {
+        // Add logic to record patient vitals
+    });
+
+    // Set to primary stage
+    Scene nurseScene = new Scene(grid, 400, 300);
+    primaryStage.setScene(nurseScene);
+}
+
+
     
     public void saveInfoToFile(String status, String first, String last, LocalDate date) {
     	String bday = date.toString();
