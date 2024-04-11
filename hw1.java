@@ -1,4 +1,8 @@
+
+
+
 package homework1;
+
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -21,7 +25,10 @@ import javafx.scene.text.Text;
 
 
 // Main class for the application, extending JavaFX Application
+
+
 public class main2 extends Application {
+
 
     // Stage for the primary window
     private Stage primaryStage;
@@ -414,6 +421,7 @@ public class main2 extends Application {
         Scene patientInfoScreen = new Scene(grid, 600, 400);
         primaryStage.setScene(patientInfoScreen);
         
+
     }
     
     private void savePatientInfoToFile(String fn, String ln, String bd, String numb, String email, String insurance, String pharmacy) {
