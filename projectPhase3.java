@@ -166,7 +166,7 @@ public class projectPhase3 extends Application {
             boolean found = search(filename);
             if(found) {
                 // Transition to the doctor screen upon successful login
-                showDoctorScreen(firstname);
+                showDoctorScreen(firstname, filename);
             } else {
                 showAlert("Error", "Doctor account not found");
             }            
@@ -310,39 +310,40 @@ public class projectPhase3 extends Application {
         
     }
     
-    private void showPatientScreen(String fn, String ln, String bd)  {
-    	GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
-        
-        Button info = new Button("View/Change Info");
-        grid.add(info, 0, 1);
-        info.setOnAction(event ->{
-        	//***open the patients info screen***
-        	patientInfoScreen(fn,ln,bd);
-        });
-        
-        Button summary = new Button("view summary of visits");
-        grid.add(summary, 0, 2);
-        summary.setOnAction(event -> {
-        	//***open the file with all the info about the patients visits***
-        });
-        
-        Button message = new Button("Message a Doctor or Nurse");
-        grid.add(message, 0, 3);
-        message.setOnAction(event -> {
-        	//***open the page to let the patient message doctors***
-        });
-    	
-        Scene patientScreen = new Scene(grid, 400, 300);
-        primaryStage.setScene(patientScreen);
-        
-        Button logout = new Button("Logout");
-        grid.add(logout, 0, 4);
-        logout.setOnAction(event-> primaryStage.setScene(createMainScene()));
-    }
+    private void showPatientScreen(String fn, String ln, String bd) {
+    	 GridPane grid = new GridPane();
+    	 grid.setAlignment(Pos.CENTER);
+    	 grid.setHgap(10);
+    	 grid.setVgap(10);
+    	 grid.setPadding(new Insets(25, 25, 25, 25));
+    	 
+    	 Button info = new Button("View/Change Info");
+    	 grid.add(info, 0, 1);
+    	 info.setOnAction(event ->{
+    	 //***open the patients info screen***
+    	 patientInfoScreen(fn,ln,bd);
+    	 });
+    	 
+    	 Button summary = new Button("view summary of visits");
+    	 grid.add(summary, 0, 2);
+    	 summary.setOnAction(event -> {
+    		 display(primaryStage, "P " + fn + " " + ln + " " + bd);
+    	 });
+    	 
+    	 Button message = new Button("Message a Doctor or Nurse");
+    	 grid.add(message, 0, 3);
+    	 message.setOnAction(event -> {
+    	 //***open the page to let the patient message doctors***
+    	 patientMessageScreen(fn,ln,bd);
+    	 });
+    	 
+    	 Scene patientScreen = new Scene(grid, 350, 200);
+    	 primaryStage.setScene(patientScreen);
+    	 
+    	 Button logout = new Button("Logout");
+    	 grid.add(logout, 0, 4);
+    	 logout.setOnAction(event-> primaryStage.setScene(createMainScene()));
+    	 }
 
     private void patientInfoScreen(String fn, String ln, String bd) {
     	GridPane grid = new GridPane();
@@ -358,7 +359,7 @@ public class projectPhase3 extends Application {
         
         String filename = "P" + " " + fn + " " + ln + " " + bd;
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-        	for (int i=0; i<4; i++) {
+        	for (int i=0; i<3; i++) {
         		reader.readLine();
         	}
         	PHONE = reader.readLine();
@@ -414,15 +415,150 @@ public class projectPhase3 extends Application {
         primaryStage.setScene(patientInfoScreen);
         
     }
+    private void patientMessageScreen(String fn, String ln, String bd) {
+    	 GridPane grid = new GridPane();
+    	 grid.setAlignment(Pos.CENTER);
+    	 grid.setHgap(20);
+    	 grid.setVgap(10);
+    	 grid.setPadding(new Insets(25, 25, 25, 25));
+    	 
+
+    	 Label FirstName = new Label("Doctor First Name:");
+    	 grid.add(FirstName, 0, 1);
+    	 TextField FirstNameField = new TextField();
+    	 grid.add(FirstNameField, 1, 1);
+    	 
+    	 Label LastName = new Label("Doctor Last Name:");
+    	 grid.add(LastName, 0, 2);
+    	 TextField LastNameField = new TextField();
+    	 grid.add(LastNameField, 1, 2);
+    	 
+    	 Label bday = new Label("Doctor Birthday: ");
+    	 grid.add(bday, 0, 3);
+    	 DatePicker bDay = new DatePicker();
+    	 grid.add(bDay, 1, 3);
+    	 
+    	 Button send = new Button("Send");
+    	 grid.add(send, 2, 1);
+    	 
+    	 Label message = new Label("Message: ");
+    	 grid.add(message, 0, 4);
+    	 TextField messageField = new TextField();
+    	 grid.add(messageField, 1, 4);
+    	 
+    	 Button back = new Button("Back");
+    	 grid.add(back, 2, 6);
+    	 back.setOnAction(event -> {
+    		 showPatientScreen(fn, ln, bd);
+    	 });
+    	 
+    	 Button recents = new Button("View Recent Messages");
+    	 grid.add(recents, 1, 6);
+    	 recents.setOnAction(event->{
+    	 String docFN = FirstNameField.getText();
+    	 String docLN = LastNameField.getText();
+    	 LocalDate BDay = bDay.getValue();
+    	 String BDAY = BDay.toString();
+    	 String filename = "D" + " " + docFN + " " + docLN + " " + BDAY;
+    	 display(primaryStage, filename);
+    	 });
+    	 send.setOnAction(event->{
+    	 String MESSAGE = messageField.getText();
+    	 String docFN = FirstNameField.getText();
+    	 String docLN = LastNameField.getText();
+    	 LocalDate BDay = bDay.getValue();
+    	 String BDAY = BDay.toString();
+    	 String filename = "D" + " " + docFN + " " + docLN + " " + BDAY;
+    	 boolean found = search(filename);
+    	 if(found) {
+    	 try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename,true))){
+    	 writer.newLine();
+    	 writer.write(fn + " " + ln +": " + MESSAGE);
+    	 }
+    	 catch (IOException ex) {
+    	 ex.printStackTrace();
+    	 }
+    	 }
+    	 });
+
+    	 Scene patientScreen = new Scene(grid, 800, 600);
+    	 primaryStage.setScene(patientScreen);
+    	 }
+    
+    private void doctorMessageScreen(String fn, String ln, String bd, String filename) {
+    	System.out.print(filename);
+   	 GridPane grid = new GridPane();
+   	 grid.setAlignment(Pos.CENTER);
+   	 grid.setHgap(20);
+   	 grid.setVgap(10);
+   	 grid.setPadding(new Insets(25, 25, 25, 25));
+   	 
+
+   	 Label FirstName = new Label("Patient First Name:");
+   	 grid.add(FirstName, 0, 1);
+   	 TextField FirstNameField = new TextField();
+   	 grid.add(FirstNameField, 1, 1);
+   	 
+   	 Label LastName = new Label("Patient Last Name:");
+   	 grid.add(LastName, 0, 2);
+   	 TextField LastNameField = new TextField();
+   	 grid.add(LastNameField, 1, 2);
+   	 
+   	 Label bday = new Label("Patient Birthday: ");
+   	 grid.add(bday, 0, 3);
+   	 DatePicker bDay = new DatePicker();
+   	 grid.add(bDay, 1, 3);
+   	 
+   	 Button send = new Button("Send");
+   	 grid.add(send, 2, 1);
+   	 
+   	 Label message = new Label("Message: ");
+   	 grid.add(message, 0, 4);
+   	 TextField messageField = new TextField();
+   	 grid.add(messageField, 1, 4);
+   	 
+   	 Button back = new Button("Back");
+   	 grid.add(back, 2, 6);
+   	 back.setOnAction(event -> {
+   		 showDoctorScreen(fn, filename);
+   	 });
+   	 
+   	 Button recents = new Button("View Recent Messages");
+   	 grid.add(recents, 1, 6);
+   	 recents.setOnAction(event->{
+   	 String docFN = FirstNameField.getText();
+   	 String docLN = LastNameField.getText();
+   	 LocalDate BDay = bDay.getValue();
+   	 String BDAY = BDay.toString();
+   	 display(primaryStage, filename);
+   	 });
+   	 send.setOnAction(event->{
+   	 String MESSAGE = messageField.getText();
+   	 String docFN = FirstNameField.getText();
+   	 String docLN = LastNameField.getText();
+   	 LocalDate BDay = bDay.getValue();
+   	 String BDAY = BDay.toString();
+   	 boolean found = search(filename);
+   	 if(found) {
+   	 try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename,true))){
+   	 writer.newLine();
+   	 writer.write(filename + ": " + MESSAGE);
+   	 }
+   	 catch (IOException ex) {
+   	 ex.printStackTrace();
+   	 }
+   	 }
+   	 });
+
+   	 Scene patientScreen = new Scene(grid, 800, 600);
+   	 primaryStage.setScene(patientScreen);
+   	 }
     
     private void savePatientInfoToFile(String fn, String ln, String bd, String numb, String email, String insurance, String pharmacy) {
     	String filename = "P" + " " + fn + " " + ln + " " + bd;
     	boolean found = search(filename);
         if(found) {
-        	try(BufferedWriter writer = new BufferedWriter(new FileWriter(filename))){
-        		for (int i=0;i<4;i++) {
-        			writer.newLine();
-        		}
+        	try(BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))){
         		writer.write(numb);
         		writer.newLine();
         		writer.write(email);
@@ -439,7 +575,7 @@ public class projectPhase3 extends Application {
     	
     }
     
-    private void showDoctorScreen(String firstName) {
+    private void showDoctorScreen(String firstName, String filename) {
         // Create the layout for the doctor screen
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -491,8 +627,7 @@ public class projectPhase3 extends Application {
 
         Label pharmacyValueLabel = new Label(pharmacyName);
         grid.add(pharmacyValueLabel, 1, 5);
-
-        // Add a button to schedule
+        
         
         Button save = new Button("Save");
         grid.add(save, 1, 6);
@@ -510,7 +645,13 @@ public class projectPhase3 extends Application {
         
         Button messagePatientButton = new Button("Message Patient");
         grid.add(messagePatientButton, 0, 8, 2, 1); // Spanning two columns
-        messagePatientButton.setOnAction(event -> showMessagingScreen());
+        messagePatientButton.setOnAction(event -> {
+        	String fn = firstNameField.getText();
+            String ln = lastNameField.getText();
+            LocalDate birth = date.getValue();
+            String bday = birth.toString();
+            doctorMessageScreen(fn, ln, bday, filename);
+        });
 
         
         // Add a back button
@@ -607,60 +748,7 @@ public class projectPhase3 extends Application {
         return "Pharmacy Not Found"; // Return a default value if pharmacy name not found
     }
     
-    private void showMessagingScreen() {
-        // Create a new GridPane for the messaging screen
-        GridPane messagingGrid = new GridPane();
-        messagingGrid.setAlignment(Pos.CENTER);
-        messagingGrid.setHgap(10);
-        messagingGrid.setVgap(10);
-        messagingGrid.setPadding(new Insets(25, 25, 25, 25));
-
-        // Add a label for selecting the patient
-        Label selectPatientLabel = new Label("Select Patient:");
-        messagingGrid.add(selectPatientLabel, 0, 0);
-
-        // Assuming you have a list of patients, create a ComboBox to select a patient
-        ComboBox<String> patientComboBox = new ComboBox<>();
-        // Add patient names to the ComboBox (you need to implement this part)
-        // For example:
-        // patientComboBox.getItems().addAll("Patient 1", "Patient 2", "Patient 3");
-        messagingGrid.add(patientComboBox, 1, 0);
-
-        // Add a text area for composing the message
-        Label messageLabel = new Label("Message:");
-        messagingGrid.add(messageLabel, 0, 1);
-
-        TextArea messageTextArea = new TextArea();
-        messageTextArea.setPrefRowCount(5); // Set preferred row count
-        messageTextArea.setWrapText(true); // Enable text wrapping
-        messagingGrid.add(messageTextArea, 0, 2, 2, 1); // Spanning two columns
-
-        // Add a button to send the message
-        Button sendMessageButton = new Button("Send Message");
-        messagingGrid.add(sendMessageButton, 0, 3, 2, 1); // Spanning two columns
-
-        // Set the action for the send message button
-        sendMessageButton.setOnAction(event -> {
-            // Get selected patient and message content
-            String selectedPatient = patientComboBox.getValue();
-            String messageContent = messageTextArea.getText();
-
-            // Implement the logic to send the message to the selected patient
-            // For demonstration, let's print the message content to the console
-            System.out.println("Message sent to " + selectedPatient + ": " + messageContent);
-        });
-
-        // Add a back button to return to the doctor's main screen
-        Button backButton = new Button("Back");
-        messagingGrid.add(backButton, 0, 4, 2, 1); // Spanning two columns
-        backButton.setOnAction(event -> showDoctorScreen("Doctor")); // Action to go back to doctor's main screen
-
-        // Create the scene for the messaging screen
-        Scene messagingScene = new Scene(messagingGrid, 400, 300);
-
-        // Set the scene to the primary stage
-        primaryStage.setScene(messagingScene);
-    }
+    
     
     private void saveAllInformationToFile(String firstName, String lastName, LocalDate initialDate, String messageContent) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("patient.txt", true))) {
@@ -858,10 +946,10 @@ public class projectPhase3 extends Application {
     }
     private void saveNurseDiagnostic(String filename, String height, String weight, String bloodPressure, String bloodOxygen, String heartRate, String notes, String date) {
     	try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
+    		writer.newLine();
     		writer.write("----------------------------------------");
             writer.newLine();
             writer.write("Nurse Entry:");
-            writer.newLine();
     		writer.newLine();
     		writer.write("Height: " + height);
 	        writer.newLine();
