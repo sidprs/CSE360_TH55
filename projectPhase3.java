@@ -1,16 +1,12 @@
-
-
-
-package homework1;
-
+package projectPhase3;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
-
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,14 +17,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.scene.text.Text;
 
 
 // Main class for the application, extending JavaFX Application
-
-
-public class main2 extends Application {
-
+public class projectPhase3 extends Application {
 
     // Stage for the primary window
     private Stage primaryStage;
@@ -228,14 +220,14 @@ public class main2 extends Application {
             
             boolean found = search(filename);
             if(found) {
-            	//This is a temporary placeholder stage to verify that information was put in correctly
+            	/*This is a temporary placeholder stage to verify that information was put in correctly
             	Stage stage = (Stage) loginButton.getScene().getWindow();
                 VBox newRoot = new VBox();
                 newRoot.getChildren().add(new Label("Welcome, Nurse " + firstname + "!"));
                 Scene newScene = new Scene(newRoot, 400, 300);
                 stage.setScene(newScene);
-                stage.show();
-                
+                stage.show();*/
+            	showNurseScreen();
             } else
             	showAlert("Error", "Nurse account not found");            
         });
@@ -344,7 +336,7 @@ public class main2 extends Application {
         	//***open the page to let the patient message doctors***
         });
     	
-        Scene patientScreen = new Scene(grid, 350, 200);
+        Scene patientScreen = new Scene(grid, 400, 300);
         primaryStage.setScene(patientScreen);
         
         Button logout = new Button("Logout");
@@ -421,7 +413,6 @@ public class main2 extends Application {
         Scene patientInfoScreen = new Scene(grid, 600, 400);
         primaryStage.setScene(patientInfoScreen);
         
-
     }
     
     private void savePatientInfoToFile(String fn, String ln, String bd, String numb, String email, String insurance, String pharmacy) {
@@ -491,6 +482,7 @@ public class main2 extends Application {
         grid.add(doctorNoteField, 1, 4);
 
         // Read pharmacy name from the file
+        createPharmacyFile();
         String pharmacyName = readPharmacyNameFromFile("pharmacy.txt");
 
         Label pharmacyNameLabel = new Label("Pharmacy Name:");
@@ -503,14 +495,17 @@ public class main2 extends Application {
         // Add a button to schedule
         
         Button save = new Button("Save");
-        grid.add(save, 1, 5);
+        grid.add(save, 1, 6);
         save.setOnAction(event -> {
-            String fn = firstNameLabel.getText();
-            String ln = lastNameLabel.getText();
-            String pe = prescriptionLabel.getText();
+            String fn = firstNameField.getText();
+            String ln = lastNameField.getText();
+            String pe = prescriptionField.getText();
             String pha = pharmacyValueLabel.getText();
+            String note = doctorNoteField.getText();
+            LocalDate birth = date.getValue();
+            String bday = birth.toString();
             
-            saveInfoToFile(fn, ln, pe, pha);
+            saveInfoToFile(fn, ln, pe, pha, note, bday);
         });
         
         Button messagePatientButton = new Button("Message Patient");
@@ -529,6 +524,25 @@ public class main2 extends Application {
         // Set the scene to the primary stage
         primaryStage.setScene(doctorScreen);
     }
+    private void createPharmacyFile() {
+        File file = new File("pharmacy.txt");
+        try {
+            if (file.createNewFile()) {
+                System.out.println("pharmacy.txt file created successfully.");
+            } else {
+                System.out.println("pharmacy.txt file already exists.");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while creating pharmacy.txt file: " + e.getMessage());
+        }
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("pharmacy.txt", true))) {
+            writer.write("Pharmacy: Walgreens");
+            writer.newLine();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     private void saveMessageToFile(String patientName, String messageContent) {
         try {
             // Extract the first name from the patient's full name
@@ -553,17 +567,23 @@ public class main2 extends Application {
             ex.printStackTrace();
         }
     }
-
-    private void saveInfoToFile(String phone, String email, String prescription, String pharmacy) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("patient_info.txt", true))) {
+    
+    private void saveInfoToFile(String first, String last, String prescription, String pharmacy, String notes, String bday) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("P " + first + " " + last + " " + bday, true))) {
             // Write phone, email, prescription, and pharmacy to the file
-            writer.write("Phone: " + phone);
+        	writer.write("----------------------------------------");
             writer.newLine();
-            writer.write("Email: " + email);
+            writer.write("Doctor Entry:");
+            writer.newLine();
+        	writer.write("First Name: " + first);
+            writer.newLine();
+            writer.write("Last Name: " + last);
             writer.newLine();
             writer.write("Prescription: " + prescription);
             writer.newLine();
             writer.write("Pharmacy: " + pharmacy);
+            writer.newLine();
+            writer.write("Doctor Notes: " + notes);
             writer.newLine();
             writer.write("----------------------------------------");
             writer.newLine();
@@ -587,25 +607,6 @@ public class main2 extends Application {
         return "Pharmacy Not Found"; // Return a default value if pharmacy name not found
     }
     
-    private void showNurseScreen()  {
-    	
-    	//Someone do
-    	
-    }
-    
-    public void saveInfoToFile(String status, String first, String last, LocalDate date) {
-    	String bday = date.toString();
-	    try (BufferedWriter writer = new BufferedWriter(new FileWriter(status + " " + first + " " + last + " " + bday))) {
-	        writer.write("First Name: " + first);
-	        writer.newLine();
-	        writer.write("Last Name: " + last);
-	        writer.newLine();
-	        writer.write("Birthday:  " + date);
-	        writer.newLine();
-	    } catch (IOException ex) {
-	        ex.printStackTrace();
-	    }
-	}
     private void showMessagingScreen() {
         // Create a new GridPane for the messaging screen
         GridPane messagingGrid = new GridPane();
@@ -660,8 +661,7 @@ public class main2 extends Application {
         // Set the scene to the primary stage
         primaryStage.setScene(messagingScene);
     }
-
-
+    
     private void saveAllInformationToFile(String firstName, String lastName, LocalDate initialDate, String messageContent) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("patient.txt", true))) {
             // Write all information to the file
@@ -680,6 +680,221 @@ public class main2 extends Application {
         }
     }
     
+    private void showNurseScreen()  {
+    	GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        
+        Label pFName = new Label("Enter Patient's First Name:");
+        grid.add(pFName, 0, 1);
+        TextField pFNameText = new TextField();
+        grid.add(pFNameText, 1, 1);
+        
+        Label pLName = new Label("Enter Patient's Last Name:");
+        grid.add(pLName, 0, 2);
+        TextField pLNameText = new TextField();
+        grid.add(pLNameText, 1, 2);
+        
+        Label pBDay = new Label("Enter Patient's Birth Date:");
+        grid.add(pBDay, 0, 3);
+        DatePicker pBDayText = new DatePicker();
+        grid.add(pBDayText, 1, 3);
+        
+        Button submit = new Button("Submit");
+        grid.add(submit, 1, 4);
+        submit.setOnAction(event -> {
+            String first = pFNameText.getText();
+            String last = pLNameText.getText();
+            LocalDate date = pBDayText.getValue();
+            String bday = date.toString();
+        
+            String filename = "P " + first + " " + last + " " + bday;
+            //System.out.print(filename);
+            boolean found = search(filename);
+            if(found) {
+            	showNurseCrossroad(filename);
+            } else
+            	showAlert("Error", "Patient not found");            
+        });
+        
+        
+        Scene nurseScreen = new Scene(grid, 400, 300);
+        primaryStage.setScene(nurseScreen);
+        
+        Button logout = new Button("Logout");
+        grid.add(logout, 0, 4);
+        logout.setOnAction(event-> primaryStage.setScene(createMainScene()));
+    	
+    }
+    
+    public void showNurseCrossroad(String filename) {
+    	GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        
+        Button current = new Button("Log Current Visit");
+        grid.add(current, 1, 1);
+        current.setOnAction(event -> {
+        	showNurseDiagnosticForm(filename);
+        });
+
+        Button history = new Button("Patient History");
+        grid.add(history, 1, 2);
+        history.setOnAction(event -> {
+        	display(primaryStage, filename);
+        });
+        
+        Button back = new Button("Back");
+        grid.add(back, 0, 2);
+        back.setOnAction(event -> {
+        	showNurseScreen();
+        });
+        
+        Scene nurseScreen = new Scene(grid, 400, 300);
+        primaryStage.setScene(nurseScreen);
+    }
+    
+    public void display(Stage primaryStage, String filename) {
+        try {
+            String content = readFileContent(filename); 
+            TextArea textArea = new TextArea(content);
+            textArea.setEditable(false);
+
+            StackPane root = new StackPane();
+            root.getChildren().add(textArea);
+
+            Scene scene = new Scene(root, 400, 600); 
+
+            Stage newStage = new Stage();
+            newStage.setTitle("File Content");
+            newStage.setScene(scene);
+            newStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private String readFileContent(String filename) throws IOException {
+        StringBuilder contentBuilder = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String currentLine;
+            while ((currentLine = br.readLine()) != null) {
+                contentBuilder.append(currentLine).append("\n");
+            }
+        }
+        return contentBuilder.toString();
+    }
+
+    public void showNurseDiagnosticForm(String filename) {
+    	GridPane grid = new GridPane();
+        grid.setAlignment(Pos.TOP_LEFT);
+        grid.setHgap(20);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+        
+        Label Height = new Label("Enter Patient's Height:");
+        grid.add(Height, 0, 1);
+        TextField HeightText = new TextField();
+        grid.add(HeightText, 1, 1);
+        
+        Label Weight = new Label("Enter Patient's Weight:");
+        grid.add(Weight, 0, 2);
+        TextField WeightText = new TextField();
+        grid.add(WeightText, 1, 2);
+        
+        Label BloodPressure = new Label("Enter Patient's Blood Pressure:");
+        grid.add(BloodPressure, 0, 3);
+        TextField BloodPressureText = new TextField();
+        grid.add(BloodPressureText, 1, 3);
+        
+        Label BloodOxygen = new Label("Enter Patient's Blood Oxygen:");
+        grid.add(BloodOxygen, 0, 4);
+        TextField BloodOxygenText = new TextField();
+        grid.add(BloodOxygenText, 1, 4);
+        
+        Label HeartRate = new Label("Enter Patient's Heart Rate:");
+        grid.add(HeartRate, 0, 5);
+        TextField HeartRateText = new TextField();
+        grid.add(HeartRateText, 1, 5);
+        
+        Label DateVisit = new Label("Enter Date of Visit:");
+        grid.add(DateVisit, 0, 6);
+        DatePicker DateVisitText = new DatePicker();
+        grid.add(DateVisitText, 1, 6);
+        
+        TextArea textArea = new TextArea();
+        textArea.setPrefHeight(400);
+        textArea.setPrefWidth(300);
+        textArea.setPromptText("Enter reason for visit here...");
+        grid.add(textArea, 0, 7);
+
+        Button submit = new Button("Submit");
+        grid.add(submit, 1, 7);
+        submit.setOnAction(event->{
+        	String height = HeightText.getText();
+        	String weight = WeightText.getText();
+        	String bloodPressure = BloodPressureText.getText();
+        	String bloodOxygen = BloodOxygenText.getText();
+        	String heartRate = HeartRateText.getText();
+        	LocalDate dateVisit = DateVisitText.getValue();
+        	String date = dateVisit.toString();
+        	String notes = textArea.getText();
+        	
+        	saveNurseDiagnostic(filename, height, weight, bloodPressure, bloodOxygen, heartRate, notes, date);
+        	
+        	
+        });
+        Button back = new Button("Back");
+        grid.add(back, 1, 8);
+        back.setOnAction(event -> { showNurseCrossroad(filename);
+        });
+        
+    	Scene patientInfoScreen = new Scene(grid, 600, 400);
+        primaryStage.setScene(patientInfoScreen);
+    }
+    private void saveNurseDiagnostic(String filename, String height, String weight, String bloodPressure, String bloodOxygen, String heartRate, String notes, String date) {
+    	try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
+    		writer.write("----------------------------------------");
+            writer.newLine();
+            writer.write("Nurse Entry:");
+            writer.newLine();
+    		writer.newLine();
+    		writer.write("Height: " + height);
+	        writer.newLine();
+	        writer.write("Weight: " + weight);
+	        writer.newLine();
+	        writer.write("Blood Pressure:  " + bloodPressure);
+	        writer.newLine();
+	        writer.write("Blood Oxygen:  " + bloodOxygen);
+	        writer.newLine();
+	        writer.write("Heart Rate:  " + heartRate);
+	        writer.newLine();
+	        writer.write("Visit Notes:  " + notes);
+	        writer.newLine();
+	        writer.write("Date Submitted:  " + date);
+	        writer.newLine();
+	        writer.write("----------------------------------------");
+	    } catch (IOException ex) {
+	        ex.printStackTrace();
+	    }
+    } 
+    public void saveInfoToFile(String status, String first, String last, LocalDate date) {
+    	String bday = date.toString();
+	    try (BufferedWriter writer = new BufferedWriter(new FileWriter(status + " " + first + " " + last + " " + bday))) {
+	        writer.write("First Name: " + first);
+	        writer.newLine();
+	        writer.write("Last Name: " + last);
+	        writer.newLine();
+	        writer.write("Birthday:  " + date);
+	        writer.newLine();
+	    } catch (IOException ex) {
+	        ex.printStackTrace();
+	    }
+	}
     public boolean search(String fileName) {
 	    try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
 	        	return true;
