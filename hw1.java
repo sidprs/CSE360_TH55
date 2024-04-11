@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 package projectPhase3;
+=======
+package homework1;
+>>>>>>> sid
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -21,7 +25,11 @@ import javafx.scene.text.Text;
 
 
 // Main class for the application, extending JavaFX Application
+<<<<<<< HEAD
 public class projectPhase3 extends Application {
+=======
+public class main2 extends Application {
+>>>>>>> sid
 
     // Stage for the primary window
     private Stage primaryStage;
@@ -132,12 +140,12 @@ public class projectPhase3 extends Application {
         grid.setVgap(10); // Vertical gap between components
         grid.setPadding(new Insets(25, 25, 25, 25)); // Padding around the grid
 
-        Label FirstName = new Label("FirstName:");
+        Label FirstName = new Label("First Name:");
         grid.add(FirstName, 0, 1);
         TextField firstName = new TextField();
         grid.add(firstName, 1, 1);
 
-        Label LastName = new Label("LastName:");
+        Label LastName = new Label("Last Name:");
         grid.add(LastName, 0, 2);
         TextField lastName = new TextField();
         grid.add(lastName, 1, 2);
@@ -166,19 +174,14 @@ public class projectPhase3 extends Application {
             
             boolean found = search(filename);
             if(found) {
-            	//This is a temporary placeholder stage to verify that information was put in correctly
-            	Stage stage = (Stage) loginButton.getScene().getWindow();
-                VBox newRoot = new VBox();
-                newRoot.getChildren().add(new Label("Welcome, Doctor " + firstname + "!"));
-                Scene newScene = new Scene(newRoot, 400, 300);
-                stage.setScene(newScene);
-                stage.show();
-            } else
-            	showAlert("Error", "Doctor account not found");            
+                // Transition to the doctor screen upon successful login
+                showDoctorScreen(firstname);
+            } else {
+                showAlert("Error", "Doctor account not found");
+            }            
         });
-            
-        
-     // Create the scene with the grid and set it to the primary stage
+
+        // Create the scene with the grid and set it to the primary stage
         Scene loginScene = new Scene(grid, 400, 300);
         primaryStage.setScene(loginScene);
     }
@@ -419,6 +422,33 @@ public class projectPhase3 extends Application {
         Scene patientInfoScreen = new Scene(grid, 600, 400);
         primaryStage.setScene(patientInfoScreen);
         
+<<<<<<< HEAD
+    }
+    
+    private void savePatientInfoToFile(String fn, String ln, String bd, String numb, String email, String insurance, String pharmacy) {
+    	String filename = "P" + " " + fn + " " + ln + " " + bd;
+    	boolean found = search(filename);
+        if(found) {
+        	try(BufferedWriter writer = new BufferedWriter(new FileWriter(filename))){
+        		for (int i=0;i<4;i++) {
+        			writer.newLine();
+        		}
+        		writer.write(numb);
+        		writer.newLine();
+        		writer.write(email);
+        		writer.newLine();
+        		writer.write(insurance);
+        		writer.newLine();
+        		writer.write(pharmacy);
+        	}
+        	catch (IOException ex) {
+        		ex.printStackTrace();
+        	}
+        } else
+        	showAlert("Error", "Account not found");
+    	
+=======
+>>>>>>> sid
     }
     
     private void savePatientInfoToFile(String fn, String ln, String bd, String numb, String email, String insurance, String pharmacy) {
@@ -445,11 +475,135 @@ public class projectPhase3 extends Application {
     	
     }
     
-    private void showDoctorScreen()  {
-    	//Someone do 
-    	
+    private void showDoctorScreen(String firstName) {
+        // Create the layout for the doctor screen
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        // Add labels and text fields for First Name, Last Name, Prescription, and Doctor Note
+        Label firstNameLabel = new Label("First Name:");
+        firstNameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        grid.add(firstNameLabel, 0, 0);
+        TextField firstNameField = new TextField();
+        grid.add(firstNameField, 1, 0);
+
+        Label lastNameLabel = new Label("Last Name:");
+        lastNameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        grid.add(lastNameLabel, 0, 1);
+        TextField lastNameField = new TextField();
+        grid.add(lastNameField, 1, 1);
+
+        Label prescriptionLabel = new Label("Prescription:");
+        prescriptionLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        grid.add(prescriptionLabel, 0, 2);
+        TextField prescriptionField = new TextField();
+        grid.add(prescriptionField, 1, 2);
+
+        Label doctorNoteLabel = new Label("Doctor Note:");
+        doctorNoteLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        grid.add(doctorNoteLabel, 0, 3);
+        TextField doctorNoteField = new TextField();
+        grid.add(doctorNoteField, 1, 3);
+
+        // Read pharmacy name from the file
+        String pharmacyName = readPharmacyNameFromFile("pharmacy.txt");
+
+        Label pharmacyNameLabel = new Label("Pharmacy Name:");
+        pharmacyNameLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        grid.add(pharmacyNameLabel, 0, 4);
+
+        Label pharmacyValueLabel = new Label(pharmacyName);
+        grid.add(pharmacyValueLabel, 1, 4);
+
+        // Add a button to schedule
+        
+        Button save = new Button("Save");
+        grid.add(save, 1, 5);
+        save.setOnAction(event -> {
+            String fn = firstNameLabel.getText();
+            String ln = lastNameLabel.getText();
+            String pe = prescriptionLabel.getText();
+            String pha = pharmacyValueLabel.getText();
+            
+            saveInfoToFile(fn, ln, pe, pha);
+        });
+        
+        Button messagePatientButton = new Button("Message Patient");
+        grid.add(messagePatientButton, 0, 8, 2, 1); // Spanning two columns
+        messagePatientButton.setOnAction(event -> showMessagingScreen());
+
+        
+        // Add a back button
+        Button backButton = new Button("Back");
+        grid.add(backButton, 0, 6, 2, 1); // Spanning two columns
+        backButton.setOnAction(event -> showDoctorLoginWindow("Doctor")); // Action to go back to doctor login
+
+        // Create the scene for the doctor screen
+        Scene doctorScreen = new Scene(grid, 600, 400);
+
+        // Set the scene to the primary stage
+        primaryStage.setScene(doctorScreen);
+    }
+    private void saveMessageToFile(String patientName, String messageContent) {
+        try {
+            // Extract the first name from the patient's full name
+            String[] nameParts = patientName.split(" ");
+            String firstName = nameParts[0];
+
+            // Create a file with the patient's first name
+            String fileName = firstName + ".txt";
+            BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true));
+
+            // Write patient name, message content, and a separator to the file
+            writer.write("Patient: " + patientName);
+            writer.newLine();
+            writer.write("Message: " + messageContent);
+            writer.newLine();
+            writer.write("----------------------------------------");
+            writer.newLine();
+
+            // Close the writer
+            writer.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void saveInfoToFile(String phone, String email, String prescription, String pharmacy) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("patient_info.txt", true))) {
+            // Write phone, email, prescription, and pharmacy to the file
+            writer.write("Phone: " + phone);
+            writer.newLine();
+            writer.write("Email: " + email);
+            writer.newLine();
+            writer.write("Prescription: " + prescription);
+            writer.newLine();
+            writer.write("Pharmacy: " + pharmacy);
+            writer.newLine();
+            writer.write("----------------------------------------");
+            writer.newLine();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
     
+    private String readPharmacyNameFromFile(String filename) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.startsWith("Pharmacy:")) {
+                    // Extract pharmacy name from the line
+                    return line.substring("Pharmacy:".length()).trim();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "Pharmacy Not Found"; // Return a default value if pharmacy name not found
+    }
     
     private void showNurseScreen()  {
     	
@@ -470,6 +624,80 @@ public class projectPhase3 extends Application {
 	        ex.printStackTrace();
 	    }
 	}
+    private void showMessagingScreen() {
+        // Create a new GridPane for the messaging screen
+        GridPane messagingGrid = new GridPane();
+        messagingGrid.setAlignment(Pos.CENTER);
+        messagingGrid.setHgap(10);
+        messagingGrid.setVgap(10);
+        messagingGrid.setPadding(new Insets(25, 25, 25, 25));
+
+        // Add a label for selecting the patient
+        Label selectPatientLabel = new Label("Select Patient:");
+        messagingGrid.add(selectPatientLabel, 0, 0);
+
+        // Assuming you have a list of patients, create a ComboBox to select a patient
+        ComboBox<String> patientComboBox = new ComboBox<>();
+        // Add patient names to the ComboBox (you need to implement this part)
+        // For example:
+        // patientComboBox.getItems().addAll("Patient 1", "Patient 2", "Patient 3");
+        messagingGrid.add(patientComboBox, 1, 0);
+
+        // Add a text area for composing the message
+        Label messageLabel = new Label("Message:");
+        messagingGrid.add(messageLabel, 0, 1);
+
+        TextArea messageTextArea = new TextArea();
+        messageTextArea.setPrefRowCount(5); // Set preferred row count
+        messageTextArea.setWrapText(true); // Enable text wrapping
+        messagingGrid.add(messageTextArea, 0, 2, 2, 1); // Spanning two columns
+
+        // Add a button to send the message
+        Button sendMessageButton = new Button("Send Message");
+        messagingGrid.add(sendMessageButton, 0, 3, 2, 1); // Spanning two columns
+
+        // Set the action for the send message button
+        sendMessageButton.setOnAction(event -> {
+            // Get selected patient and message content
+            String selectedPatient = patientComboBox.getValue();
+            String messageContent = messageTextArea.getText();
+
+            // Implement the logic to send the message to the selected patient
+            // For demonstration, let's print the message content to the console
+            System.out.println("Message sent to " + selectedPatient + ": " + messageContent);
+        });
+
+        // Add a back button to return to the doctor's main screen
+        Button backButton = new Button("Back");
+        messagingGrid.add(backButton, 0, 4, 2, 1); // Spanning two columns
+        backButton.setOnAction(event -> showDoctorScreen("Doctor")); // Action to go back to doctor's main screen
+
+        // Create the scene for the messaging screen
+        Scene messagingScene = new Scene(messagingGrid, 400, 300);
+
+        // Set the scene to the primary stage
+        primaryStage.setScene(messagingScene);
+    }
+
+
+    private void saveAllInformationToFile(String firstName, String lastName, LocalDate initialDate, String messageContent) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("patient.txt", true))) {
+            // Write all information to the file
+            writer.write("Patient Name: " + firstName + " " + lastName);
+            writer.newLine();
+            writer.write("Initial Date Added: " + initialDate);
+            writer.newLine();
+            writer.write("Message:");
+            writer.newLine();
+            writer.write(messageContent);
+            writer.newLine();
+            writer.write("----------------------------------------");
+            writer.newLine();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
     public boolean search(String fileName) {
 	    try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
 	        	return true;
